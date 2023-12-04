@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import { registerValidation } from './validations/auth.js';
 import { validationResult } from 'express-validator';
 import UserModel from './models/User.js';
+import checkAuth from './utils/checkAuth.js';
 
 //try to connect to database
 mongoose.connect(
@@ -109,6 +110,27 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         console.log(err);
         res.status(500).json({
             message: 'Failed to register',
+        });
+    }
+});
+
+app.get('/auth/me', checkAuth, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User was not found',
+            });
+        }
+
+        const { passwordHash, ...userData } = user._doc;
+
+        res.json(userData);
+    }
+    catch (err) {
+        return res.status(500).json({
+            message: 'No access!',
         });
     }
 });
