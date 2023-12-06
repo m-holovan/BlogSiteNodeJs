@@ -4,8 +4,10 @@ dotenv.config();
 import mongoose from 'mongoose';
 import { registerValidation } from './validations/auth.js';
 import checkAuth from './utils/checkAuth.js';
+import * as postValidation from './validations/postValidation.js';
 
 import * as UserController from './controllers/UserController.js';
+import * as PostController from './controllers/PostController.js';
 
 //try to connect to database
 mongoose.connect(
@@ -29,6 +31,9 @@ app.post('/auth/register', registerValidation, UserController.register);
 
 //route to get info about user
 app.get('/auth/me', checkAuth, UserController.getMe);
+
+//route to create new post
+app.post('/post', checkAuth, postValidation.postCreateValidation, PostController.create);
 
 app.listen(4444, (err) => {
     if (err) {
