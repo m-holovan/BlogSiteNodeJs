@@ -38,6 +38,9 @@ app.get('/posts', PostController.getAll);
 //rote to get post by id
 app.get('/posts/:id', PostController.getOne);
 
+//route to delete post by id
+app.delete('/posts/:id', checkAuth, PostController.remove);
+
 //route to create new post
 app.post('/posts', checkAuth, postValidation.postCreateValidation, PostController.create);
 

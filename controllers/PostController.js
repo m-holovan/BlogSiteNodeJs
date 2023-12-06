@@ -45,6 +45,31 @@ export const getOne = async (req, res) => {
     }
 };
 
+export const remove = async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        const deletedPost = await PostModel.findOneAndDelete({
+            _id: postId,
+        }).exec();
+
+        if (!deletedPost) {
+            return res.status(404).json({
+                message: 'Cant delete post',
+            });
+        }
+
+        res.json({
+            success: true,
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Cannot remove post!',
+        });
+    }
+};
 
 export const create = async (req, res) => {
     try {
