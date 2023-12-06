@@ -32,8 +32,10 @@ app.post('/auth/register', registerValidation, UserController.register);
 //route to get info about user
 app.get('/auth/me', checkAuth, UserController.getMe);
 
+//reote to get all posts
+app.get('/posts', PostController.getAll);
 //route to create new post
-app.post('/post', checkAuth, postValidation.postCreateValidation, PostController.create);
+app.post('/posts', checkAuth, postValidation.postCreateValidation, PostController.create);
 
 app.listen(4444, (err) => {
     if (err) {
