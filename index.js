@@ -44,6 +44,9 @@ app.delete('/posts/:id', checkAuth, PostController.remove);
 //route to create new post
 app.post('/posts', checkAuth, postValidation.postCreateValidation, PostController.create);
 
+//route to update post 
+app.patch('/posts/:id', checkAuth, PostController.update);
+
 app.listen(4444, (err) => {
     if (err) {
         console.log(err);
