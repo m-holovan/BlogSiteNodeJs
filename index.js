@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import dotenv from 'dotenv';
 dotenv.config();
 import mongoose from 'mongoose';
@@ -8,6 +9,7 @@ import * as postValidation from './validations/postValidation.js';
 
 import * as UserController from './controllers/UserController.js';
 import * as PostController from './controllers/PostController.js';
+import handleValidationErrors from './utils/handleValidationErrors.js';
 
 //try to connect to database
 mongoose.connect(
@@ -17,17 +19,36 @@ mongoose.connect(
 
 const app = express();
 
+const storage = multer.diskStorage({
+    destination: (_, __, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (_, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
+
+const upload = multer({ storage });
+
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
     res.send("Hello, world!");
 });
 
+//route to upload image
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+    res.json({
+        url: `/uploads/${req.file.originalname}`,
+    });
+});
+
 //route to login 
-app.post('/auth/login', UserController.login);
+app.post('/auth/login', handleValidationErrors, UserController.login);
 
 //route to register new user
-app.post('/auth/register', registerValidation, UserController.register);
+app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register);
 
 //route to get info about user
 app.get('/auth/me', checkAuth, UserController.getMe);
