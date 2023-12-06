@@ -2,7 +2,7 @@ import PostModel from '../models/Post.js';
 
 export const getAll = async (req, res) => {
     try {
-        const posts = await PostModel.find();
+        const posts = await PostModel.find().populate('user').exec();
 
         res.json(posts);
     }
@@ -13,6 +13,38 @@ export const getAll = async (req, res) => {
         });
     }
 };
+
+export const getOne = async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        const updatedPost = await PostModel.findOneAndUpdate(
+            {
+                _id: postId,
+            },
+            {
+                $inc: { viewsCount: 1 },
+            },
+            {
+                returnDocument: 'after',
+            },
+        ).exec();
+
+        if (!updatedPost) {
+            return res.status(404).json({
+                message: 'Cant find post',
+            });
+        }
+
+        res.json(updatedPost);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Error finding or updating post',
+        });
+    }
+};
+
 
 export const create = async (req, res) => {
     try {

@@ -34,6 +34,10 @@ app.get('/auth/me', checkAuth, UserController.getMe);
 
 //reote to get all posts
 app.get('/posts', PostController.getAll);
+
+//rote to get post by id
+app.get('/posts/:id', PostController.getOne);
+
 //route to create new post
 app.post('/posts', checkAuth, postValidation.postCreateValidation, PostController.create);
 
